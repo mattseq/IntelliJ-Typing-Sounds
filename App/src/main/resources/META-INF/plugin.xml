@@ -1,0 +1,17 @@
+<idea-plugin>
+    <id>dk.project.app</id>
+    <name>App Keyboard Sound</name>
+    <version>1.0.0</version>
+    <vendor email="cph-jl325@stud.ek.dk" url="https://github.com/Guacamoleboy/IntelliJ-Typing-Sounds">Guacamoleboy</vendor>
+
+    <description>
+        Plays keyboard typing sounds in IntelliJ IDEA, similar to Opera GX.
+    </description>
+
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <editorFactoryListener implementation="dk.project.keyboard.KeyboardSoundListener"/>
+    </extensions>
+
+</idea-plugin>
