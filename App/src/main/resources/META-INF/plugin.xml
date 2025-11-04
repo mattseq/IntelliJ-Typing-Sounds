@@ -1,6 +1,6 @@
 <idea-plugin>
     <id>dk.project.app</id>
-    <name>App Keyboard Sound</name>
+    <name>Keyboard Sounds</name>
     <version>1.0.0</version>
     <vendor email="cph-jl325@stud.ek.dk" url="https://github.com/Guacamoleboy/IntelliJ-Typing-Sounds">Guacamoleboy</vendor>
 
