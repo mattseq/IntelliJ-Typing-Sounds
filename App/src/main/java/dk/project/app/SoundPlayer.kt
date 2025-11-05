@@ -15,8 +15,8 @@ class SoundPlayer {
     private val cooldownMs = 140L
     private val pressedKeys = mutableSetOf<Int>()
     private val typingData: ByteArray by lazy { loadSound("/sounds/typing.wav") }
-    private val enterData: ByteArray by lazy { loadSound("/sounds/enter.wav") }
-    private val backData: ByteArray by lazy { loadSound("/sounds/back.wav") }
+    private val enterData: ByteArray by lazy { loadSound("/sounds/enter2.wav") } // Not working right now for some reason
+    private val backData: ByteArray by lazy { loadSound("/sounds/back2.wav") }
 
     // __________________________________________________________
 
@@ -42,13 +42,16 @@ class SoundPlayer {
 
     fun playSound(keyCode: Int) {
 
+        // Gets our values
         val currentTime = System.currentTimeMillis()
         if (pressedKeys.contains(keyCode)) return
         if (currentTime - lastPlayedTime < cooldownMs) return
 
+        // Sets our values
         lastPlayedTime = currentTime
         pressedKeys.add(keyCode)
 
+        // Sets our sound to whatever key is being pressed.
         val soundData = when (keyCode) {
             KeyEvent.VK_ENTER -> enterData
             KeyEvent.VK_BACK_SPACE, KeyEvent.VK_DELETE -> backData
@@ -59,10 +62,11 @@ class SoundPlayer {
             val audioStream = AudioSystem.getAudioInputStream(ByteArrayInputStream(soundData))
             val clip = AudioSystem.getClip().apply {
 
+                // In order to prevent it sounding uniform and monotome we set the value to -5 +5 in random().
                 open(audioStream)
                 val volumeControl = getControl(FloatControl.Type.MASTER_GAIN) as FloatControl
                 val randomOffset = (-5..5).random()
-                volumeControl.value = -28f + randomOffset
+                volumeControl.value = -28f + randomOffset // For update 1.2.0
                 start()
 
             }

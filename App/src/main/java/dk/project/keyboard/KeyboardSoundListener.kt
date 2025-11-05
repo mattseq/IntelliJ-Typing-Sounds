@@ -23,8 +23,11 @@ class KeyboardSoundListener : EditorFactoryListener {
         val component = editor.contentComponent
 
         component.addKeyListener(object : KeyListener {
+
+            // Type
             override fun keyTyped(e: java.awt.event.KeyEvent) {}
 
+            // Pressed
             override fun keyPressed(e: java.awt.event.KeyEvent) {
                 val keyCode = e.keyCode
                 if (!pressedKeys.contains(keyCode)) {
@@ -33,19 +36,21 @@ class KeyboardSoundListener : EditorFactoryListener {
                 }
             }
 
+            // Released
             override fun keyReleased(e: java.awt.event.KeyEvent) {
                 pressedKeys.remove(e.keyCode)
                 soundPlayer.keyReleased(e.keyCode)
             }
+
         })
 
         editor.document.addDocumentListener(object : DocumentListener {
+
             override fun beforeDocumentChange(event: DocumentEvent) {}
 
             override fun documentChanged(event: DocumentEvent) {
                 scope.launch {
                     val newText = event.newFragment.toString()
-
                     if (newText == "\n") {
                         soundPlayer.playSound(KeyEvent.VK_ENTER)
                     } else if (newText.isEmpty() && event.oldLength > 0) {
@@ -53,6 +58,7 @@ class KeyboardSoundListener : EditorFactoryListener {
                     }
                 }
             }
+
         })
     }
 
