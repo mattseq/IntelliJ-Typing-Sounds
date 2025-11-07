@@ -10,22 +10,26 @@ import java.awt.event.KeyEvent
 
 class SoundPlayer {
 
+    // Same as "public static" in .java basically
+    companion object {
+        const val ENTER_MARKER = -1000
+    }
+
     // Attributes
     private var lastPlayedTime = 0L
     private val cooldownMs = 140L
     private val pressedKeys = mutableSetOf<Int>()
     private val typingData: ByteArray by lazy { loadSound("/sounds/typing.wav") }
-    private val enterData: ByteArray by lazy { loadSound("/sounds/enter2.wav") } // Not working right now for some reason
+    private val enterData: ByteArray by lazy { loadSound("/sounds/enter2.wav") }
     private val backData: ByteArray by lazy { loadSound("/sounds/back2.wav") }
 
     // __________________________________________________________
+    // Loads our .wav file and converts it to ByteArray for better stability
 
     private fun loadSound(path: String): ByteArray {
-
         val inputStream = this::class.java.getResourceAsStream(path)
             ?: throw IllegalStateException("$path not found in /resources folder location")
         val buffer = ByteArrayOutputStream()
-
         inputStream.use { inp ->
             val data = ByteArray(1024)
             var n: Int
@@ -33,48 +37,51 @@ class SoundPlayer {
                 buffer.write(data, 0, n)
             }
         }
-
         return buffer.toByteArray()
-
     }
 
     // __________________________________________________________
 
     fun playSound(keyCode: Int) {
 
-        // Gets our values
         val currentTime = System.currentTimeMillis()
+
+        // If same key is pressed
         if (pressedKeys.contains(keyCode)) return
-        if (currentTime - lastPlayedTime < cooldownMs) return
 
-        // Sets our values
+        // Prevent cooldown on important keys such as BACK_SPACE & ENTER.
+        val isBackOrDelete = (keyCode == KeyEvent.VK_BACK_SPACE || keyCode == KeyEvent.VK_DELETE)
+        val isEnterMarker = (keyCode == ENTER_MARKER)
+        val ignoreCooldown = isBackOrDelete || isEnterMarker
+
+        if (!ignoreCooldown && currentTime - lastPlayedTime < cooldownMs) return
+
         lastPlayedTime = currentTime
-        pressedKeys.add(keyCode)
 
-        // Sets our sound to whatever key is being pressed.
-        val soundData = when (keyCode) {
-            KeyEvent.VK_ENTER -> enterData
-            KeyEvent.VK_BACK_SPACE, KeyEvent.VK_DELETE -> backData
+        if (!isEnterMarker) {
+            pressedKeys.add(keyCode)
+        }
+
+        // Choose correct sound file
+        val soundData = when {
+            isEnterMarker -> enterData
+            keyCode == KeyEvent.VK_ENTER -> enterData
+            isBackOrDelete -> backData
             else -> typingData
         }
 
         try {
             val audioStream = AudioSystem.getAudioInputStream(ByteArrayInputStream(soundData))
             val clip = AudioSystem.getClip().apply {
-
-                // In order to prevent it sounding uniform and monotome we set the value to -5 +5 in random().
                 open(audioStream)
                 val volumeControl = getControl(FloatControl.Type.MASTER_GAIN) as FloatControl
                 val randomOffset = (-5..5).random()
-                volumeControl.value = -28f + randomOffset // For update 1.2.0
+                volumeControl.value = -28f + randomOffset // Maybe -25f is better for a later version. Needs testing.
                 start()
-
             }
-
         } catch (e: Exception) {
             e.printStackTrace()
         }
-
     }
 
     // __________________________________________________________

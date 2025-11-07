@@ -1,7 +1,7 @@
 // Package
 package dk.project.keyboard
 
-// Import
+// Imports
 import com.intellij.openapi.editor.event.*
 import dk.project.app.SoundPlayer
 import kotlinx.coroutines.*
@@ -24,12 +24,18 @@ class KeyboardSoundListener : EditorFactoryListener {
 
         component.addKeyListener(object : KeyListener {
 
-            // Type
+            // Typed
             override fun keyTyped(e: java.awt.event.KeyEvent) {}
 
             // Pressed
             override fun keyPressed(e: java.awt.event.KeyEvent) {
+
                 val keyCode = e.keyCode
+
+                // Fixes the ctrl+s sound issue
+                if (e.isControlDown || e.isAltDown || e.isMetaDown) return
+
+                // Don't play if key already is pressed
                 if (!pressedKeys.contains(keyCode)) {
                     pressedKeys.add(keyCode)
                     scope.launch { soundPlayer.playSound(keyCode) }
@@ -47,18 +53,18 @@ class KeyboardSoundListener : EditorFactoryListener {
         editor.document.addDocumentListener(object : DocumentListener {
 
             override fun beforeDocumentChange(event: DocumentEvent) {}
-
             override fun documentChanged(event: DocumentEvent) {
                 scope.launch {
                     val newText = event.newFragment.toString()
-                    if (newText == "\n") {
-                        soundPlayer.playSound(KeyEvent.VK_ENTER)
+
+                    // Fixes our VK_ENTER bug in 1.1.0
+                    if (newText.contains('\n') || newText.contains('\r')) {
+                        soundPlayer.playSound(SoundPlayer.ENTER_MARKER)
                     } else if (newText.isEmpty() && event.oldLength > 0) {
                         soundPlayer.playSound(KeyEvent.VK_BACK_SPACE)
                     }
                 }
             }
-
         })
     }
 
