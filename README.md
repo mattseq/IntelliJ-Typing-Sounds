@@ -11,6 +11,7 @@ ____________________________________________________________
 - No sound on CTRL + S (Multiple Keypresses).
 - No Delay on Back / Enter for better sound quality
 - Delay on typing for better feel and better sync with fast typers. Slow typers won't notice this.
+- Plugin per editor
 
 ____________________________________________________________
 
