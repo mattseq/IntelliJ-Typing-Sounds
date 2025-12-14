@@ -95,6 +95,7 @@ class SoundPlayer {
     // Helper to convert percent volume to decibels
     private fun percentToDb(volumePercent: Int): Float {
         val p = volumePercent.coerceIn(0, 100)
+        if (p == 0) return -80.0f // prevent log(0)
         return (20 * log10(p / 100.0)).toFloat()
     }
 
