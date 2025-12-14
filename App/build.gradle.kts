@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dk.project"
-version = "1.2.0"
+version = "1.3.0"
 
 repositories {
     mavenCentral()
@@ -18,7 +18,7 @@ dependencies {
 }
 
 intellij {
-    version.set("2025.2.1") //version.set("2024.2.2")
+    version.set("2025.2.1") // version.set("2024.2.2")
     type.set("IC")
     plugins.set(listOf("java"))
     sandboxDir.set(file("${project.buildDir}/idea-sandbox").absolutePath)

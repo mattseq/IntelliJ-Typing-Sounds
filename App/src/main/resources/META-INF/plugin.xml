@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>dk.project.app</id>
     <name>Keyboard Typing Sounds</name>
-    <version>1.2.0</version>
+    <version>1.3.0</version>
     <vendor email="cph-jl325@stud.ek.dk" url="https://github.com/Guacamoleboy/IntelliJ-Typing-Sounds">Guacamoleboy</vendor>
 
     <description>

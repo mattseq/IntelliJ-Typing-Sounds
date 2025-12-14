@@ -12,7 +12,7 @@ class KeyboardSoundListener : EditorFactoryListener {
 
     // Attributes
     private val soundPlayer = SoundPlayer()
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO) // V. 1.3.0 FIX
     private val pressedKeys = mutableSetOf<Int>()
 
     // __________________________________________________________
@@ -53,7 +53,9 @@ class KeyboardSoundListener : EditorFactoryListener {
         editor.document.addDocumentListener(object : DocumentListener {
 
             override fun beforeDocumentChange(event: DocumentEvent) {}
+
             override fun documentChanged(event: DocumentEvent) {
+
                 scope.launch {
                     val newText = event.newFragment.toString()
 
@@ -64,6 +66,7 @@ class KeyboardSoundListener : EditorFactoryListener {
                         soundPlayer.playSound(KeyEvent.VK_BACK_SPACE)
                     }
                 }
+
             }
         })
     }
@@ -71,7 +74,7 @@ class KeyboardSoundListener : EditorFactoryListener {
     // __________________________________________________________
 
     override fun editorReleased(event: EditorFactoryEvent) {
-        scope.cancel()
+        // scope.cancel() V. 1.3.0 FIX
     }
 
 } // KeyboardSoundListener end
