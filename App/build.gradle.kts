@@ -1,56 +1,78 @@
+/*
+
+    Please use IntelliJ version.set("2024.2.2") for features
+    and version.set("2025.2.1") for publish.
+
+    Please don't upgrade plugins as they can cause issues for runIde and builds.
+    Consult with Guacamoleboy if you want to do so and why.
+
+*/
+
+
 plugins {
-    kotlin("jvm") version "2.2.0"
-    id("org.jetbrains.intellij") version "1.17.3"
-    id("java")
+    kotlin("jvm") version "2.2.0"                                                                       // Kotlin Plugin
+    id("org.jetbrains.intellij") version "1.17.3"                                                       // IntelliJ Platform Plugin
+    id("java")                                                                                          // Java Plugin
 }
 
-group = "dk.project"
-version = "1.4.0"
+group = "dk.project"                                                                                    // Group ID
+version = "1.4.0"                                                                                       // Version Control
 
 repositories {
-    mavenCentral()
+    mavenCentral()                                                                                      // Using maven to get dependencies
 }
 
 dependencies {
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))                                          // JUnit
+    testImplementation("org.junit.jupiter:junit-jupiter")                                               // JUnit Test Framework
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")                                       // JUnit Test Launcher
 }
 
 intellij {
-    version.set("2025.2.1") // version.set("2025.2.1") BUILD | version.set("2024.2.2") TEST
-    type.set("IC")
-    plugins.set(listOf("java"))
-    sandboxDir.set(file("${project.buildDir}/idea-sandbox").absolutePath)
+    version.set("2024.2.2") // version.set("2025.2.1") BUILD | version.set("2024.2.2") TEST             // IntelliJ Version | Publish | Test
+    type.set("IC")                                                                                      // IntelliJ Community Edition
+    plugins.set(listOf("java"))                                                                         // Java IntelliJ Plugin
+    sandboxDir.set(file("${project.buildDir}/idea-sandbox").absolutePath)                               // Sandbox location
 }
 
 tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {                         // Config Kotlin Compiler
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)                             // Java 17
         }
     }
 
-    withType<JavaCompile>().configureEach {
-        sourceCompatibility = JavaVersion.VERSION_17.toString()
-        targetCompatibility = JavaVersion.VERSION_17.toString()
+    withType<JavaCompile>().configureEach {                                                             // Config Java Compiler
+        sourceCompatibility = JavaVersion.VERSION_17.toString()                                         // Java 17
+        targetCompatibility = JavaVersion.VERSION_17.toString()                                         // Java 17
     }
 
     patchPluginXml {
-        sinceBuild.set("241")
-        changeNotes.set("Initial release of App Keyboard Sound plugin.")
+        sinceBuild.set("241") // sinceBuild.set("252") | sinceBuild.set("241")                          // Least supported version
+        changeNotes.set(                                                                                // Change Notes for publish
+            """
+            <p><b>Version 1.5.0</b></p>
+            <ul>
+                <li>Custom Audio Settings</li>
+                <li>Sound delay fixes</li>
+                <li>Bug fixes</li>
+                <li>Misc tweaks & Upgrades</li>
+            </ul>
+            <p>To adjust sound volume go to Settings -> Search -> Typing Sounds</p>
+            """.trimIndent()
+        )
     }
 
     buildSearchableOptions {
-        enabled = false
+        enabled = false                                                                                 // False for faster build
     }
 
-    runIde {
+    runIde {                                                                                            // .\gradlew runIde Config
         jvmArgs = listOf("-Xmx1024m", "-Didea.is.internal=true")
         systemProperty("idea.platform.prefix", "Idea")
     }
 
-    test {
-        useJUnitPlatform()
+    test {                                                                                              // Test Config
+        useJUnitPlatform()                                                                              // JUnit 5
     }
 }

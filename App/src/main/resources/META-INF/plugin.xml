@@ -8,9 +8,11 @@
         Plays keyboard typing sounds in IntelliJ IDEA, similar to Opera GX.
     </description>
 
+    <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <startupActivity implementation="dk.project.event.BuildSoundStartup"/>
         <editorFactoryListener implementation="dk.project.keyboard.KeyboardSoundListener"/>
         <applicationConfigurable instance="dk.project.app.SettingsConfigurable"
                                  displayName="Typing Sounds"/>
